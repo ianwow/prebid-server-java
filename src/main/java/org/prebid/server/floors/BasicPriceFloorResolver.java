@@ -15,8 +15,6 @@ import com.iab.openrtb.request.Imp;
 import com.iab.openrtb.request.Publisher;
 import com.iab.openrtb.request.Site;
 import com.iab.openrtb.request.Video;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -35,6 +33,8 @@ import org.prebid.server.floors.model.PriceFloorSchema;
 import org.prebid.server.geolocation.CountryCodeMapper;
 import org.prebid.server.json.JacksonMapper;
 import org.prebid.server.log.ConditionalLogger;
+import org.prebid.server.log.Logger;
+import org.prebid.server.log.LoggerFactory;
 import org.prebid.server.metric.MetricName;
 import org.prebid.server.metric.Metrics;
 import org.prebid.server.proto.openrtb.ext.request.ExtImpPrebid;
@@ -184,7 +184,7 @@ public class BasicPriceFloorResolver implements PriceFloorResolver {
         final PriceFloorData data = ObjectUtil.getIfNotNull(floors, PriceFloorRules::getData);
         final List<PriceFloorModelGroup> modelGroups = ObjectUtil.getIfNotNull(data, PriceFloorData::getModelGroups);
 
-        return CollectionUtils.isNotEmpty(modelGroups) ? modelGroups.get(0) : null;
+        return CollectionUtils.isNotEmpty(modelGroups) ? modelGroups.getFirst() : null;
     }
 
     private static <V> Map<String, V> keysToLowerCase(Map<String, V> map) {
@@ -313,7 +313,7 @@ public class BasicPriceFloorResolver implements PriceFloorResolver {
             return PrebidConfigParameter.wildcard();
         }
 
-        final ImpMediaType impMediaType = impMediaTypes.get(0);
+        final ImpMediaType impMediaType = impMediaTypes.getFirst();
         return impMediaType == ImpMediaType.video
                 ? SimpleDirectParameter.of(List.of(impMediaType.toString(), VIDEO_ALIAS))
                 : SimpleDirectParameter.of(impMediaType.toString());
@@ -331,7 +331,7 @@ public class BasicPriceFloorResolver implements PriceFloorResolver {
             return null;
         }
 
-        return switch (mediaTypes.get(0)) {
+        return switch (mediaTypes.getFirst()) {
             case banner -> resolveFormatFromBannerImp(imp);
             case video -> resolveFormatFromVideoImp(imp);
             default -> null;
@@ -346,7 +346,7 @@ public class BasicPriceFloorResolver implements PriceFloorResolver {
             case 0 -> formatOf(
                     ObjectUtil.getIfNotNull(banner, Banner::getW),
                     ObjectUtil.getIfNotNull(banner, Banner::getH));
-            case 1 -> formats.get(0);
+            case 1 -> formats.getFirst();
             default -> null;
         };
     }

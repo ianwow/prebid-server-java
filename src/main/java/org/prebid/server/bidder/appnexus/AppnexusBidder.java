@@ -54,7 +54,7 @@ import org.prebid.server.util.BidderUtil;
 import org.prebid.server.util.HttpUtil;
 import org.prebid.server.util.ObjectUtil;
 
-import javax.validation.ValidationException;
+import jakarta.validation.ValidationException;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -218,7 +218,7 @@ public class AppnexusBidder implements Bidder<BidRequest> {
         final Integer height = banner.getH();
         final List<Format> formats = banner.getFormat();
         final Format firstFormat = CollectionUtils.isNotEmpty(formats)
-                ? formats.get(0)
+                ? formats.getFirst()
                 : null;
 
         final boolean replaceWithFirstFormat = firstFormat != null && width == null && height == null;
